@@ -1,8 +1,9 @@
-const CACHE="wortschatz-a1-b1-3-0-v1";
-const ASSETS=["./","./wortschatz.html","./manifest.webmanifest","./icon-192.png","./icon-512.png"];
+const CACHE="wortschatz-a1-b1-3-0-v2";
+const ASSETS=["./wortschatz.html","./manifest.webmanifest","./icon-192.png","./icon-512.png"];
 
 self.addEventListener("install",e=>e.waitUntil(
-  caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));
+  caches.open(CACHE).then(c=>Promise.all(ASSETS.map(a=>c.add(a).catch(()=>{}))))
+  .then(()=>self.skipWaiting())));
 
 self.addEventListener("activate",e=>e.waitUntil(
   caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k))))
